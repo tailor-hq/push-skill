@@ -1,0 +1,20 @@
+{
+  "name": "push-skill",
+  "owner": {
+    "name": "Tailor AI",
+    "url": "https://tailorhq.ai"
+  },
+  "metadata": {
+    "description": "The /push skill: check a branch the way a careful reviewer would, then push it.",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "push-skill",
+      "source": "./",
+      "description": "Runs two review passes on different models, an adversarial security pass that blocks, a per-area coverage gate, and a live run against the real application, then pushes. No dependencies.",
+      "category": "workflow",
+      "tags": ["code-review", "security", "testing", "ci", "git"]
+    }
+  ]
+}

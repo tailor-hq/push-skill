@@ -1,0 +1,36 @@
+{
+  "name": "push-skill",
+  "version": "1.0.0",
+  "description": "A Claude Code skill that checks a branch the way a careful reviewer would, then pushes it. Two review passes with an adversarial security pass, a coverage gate, and a live run.",
+  "keywords": [
+    "claude-code",
+    "claude",
+    "agent",
+    "code-review",
+    "security-review",
+    "ci",
+    "developer-tools"
+  ],
+  "license": "MIT",
+  "author": "Tailor AI",
+  "homepage": "https://github.com/tailor-hq/push-skill#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tailor-hq/push-skill.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tailor-hq/push-skill/issues"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "node --test 'skills/push/scripts/*.test.js'"
+  },
+  "files": [
+    "skills",
+    ".claude-plugin",
+    "push.config.example.json",
+    "push.config.schema.json"
+  ]
+}

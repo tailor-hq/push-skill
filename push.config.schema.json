@@ -1,0 +1,137 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/tailor-hq/push-skill/push.config.schema.json",
+  "title": "push.config.json",
+  "type": "object",
+  "additionalProperties": true,
+  "properties": {
+    "$comment": { "type": "string" },
+    "base": { "type": "string", "description": "Deprecated. Use git.base." },
+    "git": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "base": { "type": "string", "description": "What diffs are compared against, e.g. origin/main or upstream/main." },
+        "pushRemote": { "type": "string", "description": "Where pushes go. Differs from base on a fork." }
+      }
+    },
+    "ignore": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Globs that select nothing at all. Avoid **/*.md: prose can decide behavior."
+    },
+    "checks": {
+      "type": "object",
+      "description": "Check families. A path matching no rule selects ALL of them.",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["command", "paths"],
+        "properties": {
+          "command": { "type": "string" },
+          "description": { "type": "string" },
+          "paths": { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+        }
+      }
+    },
+    "suites": {
+      "type": "object",
+      "description": "End-to-end suites.",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["command", "paths"],
+        "properties": {
+          "command": { "type": "string" },
+          "description": { "type": "string" },
+          "paths": { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+        }
+      }
+    },
+    "e2e": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "$comment": { "type": "string" },
+        "unmapped": {
+          "enum": ["all", "none"],
+          "description": "What a path matching no suite rule selects. \"none\" requires mainBranchSafetyNet."
+        },
+        "mainBranchSafetyNet": {
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "required": ["description"],
+              "properties": {
+                "description": { "type": "string" },
+                "workflow": { "type": "string" }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "$comment": { "type": "string" },
+        "guidelines": { "type": "array", "items": { "type": "string" } },
+        "securitySurfaces": { "type": "array", "items": { "type": "string" } },
+        "secondOpinion": {
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "required": ["command"],
+              "properties": {
+                "command": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+                "required": { "type": "boolean" }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "exercise": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "$comment": { "type": "string" },
+        "notes": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "pr": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "createCommand": { "type": "array", "items": { "type": "string" } },
+        "updateCommand": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "areas": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "paths"],
+            "properties": {
+              "name": { "type": "string" },
+              "paths": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+              "advisory": { "type": "boolean" },
+              "note": { "type": "string" },
+              "testConvention": { "enum": ["sibling", "__tests__", "parallel-tests-dir"] }
+            }
+          }
+        },
+        "exempt": { "type": "array", "items": { "type": "string" } },
+        "unclaimedBlocks": { "type": "boolean" },
+        "testGlobs": { "type": "array", "items": { "type": "string" } },
+        "logicExtensions": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

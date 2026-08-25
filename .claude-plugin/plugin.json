@@ -1,0 +1,13 @@
+{
+  "name": "push-skill",
+  "version": "1.0.0",
+  "description": "Check a branch the way a careful reviewer would, then push it. Two review passes with an adversarial security pass, a coverage gate, and a live run against the real app.",
+  "author": {
+    "name": "Tailor AI",
+    "url": "https://tailorhq.ai"
+  },
+  "homepage": "https://github.com/tailor-hq/push-skill#readme",
+  "repository": "https://github.com/tailor-hq/push-skill",
+  "license": "MIT",
+  "keywords": ["push", "code-review", "security-review", "ci", "agents", "claude-code", "codex"]
+}

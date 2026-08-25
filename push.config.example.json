@@ -1,0 +1,90 @@
+{
+  "$schema": "./push.config.schema.json",
+  "$comment": "Run `node \"${CLAUDE_SKILL_DIR}/scripts/init-config.js\"` to generate this from your own repo instead of editing by hand.",
+
+  "git": {
+    "base": "origin/main",
+    "pushRemote": "origin"
+  },
+
+  "ignore": ["docs/**", "LICENSE"],
+
+  "checks": {
+    "app": {
+      "command": "npm run build && npm run lint && npm test",
+      "description": "build, lint and unit tests",
+      "paths": ["src/**", "package.json", "package-lock.json", "tsconfig.json"]
+    },
+    "tooling": {
+      "command": "node --test scripts/",
+      "description": "the repo's own scripts, CI config and agent instructions",
+      "paths": ["scripts/**", ".github/**", "push.config.json", "CLAUDE.md", "AGENTS.md", "**/SKILL.md"]
+    }
+  },
+
+  "suites": {
+    "checkout": {
+      "command": "npx playwright test e2e/checkout",
+      "description": "checkout flow, end to end",
+      "paths": ["src/checkout/**", "src/payments/**", "e2e/**"]
+    },
+    "auth": {
+      "command": "npx playwright test e2e/auth",
+      "description": "sign-in and session handling",
+      "paths": ["src/auth/**", "src/middleware/**", "e2e/**"]
+    }
+  },
+
+  "e2e": {
+    "$comment": "unmapped defaults to \"all\". Set \"none\" only with a real safety net, because it means a path nothing maps runs no e2e at all before merging.",
+    "unmapped": "none",
+    "mainBranchSafetyNet": {
+      "description": "The full Playwright suite runs hourly against main, and only a commit that passes it is promoted to staging.",
+      "workflow": ".github/workflows/e2e-scheduled.yml"
+    }
+  },
+
+  "review": {
+    "$comment": "Your standards go here, not in SKILL.md. Both reviewers read these first.",
+    "guidelines": ["CONTRIBUTING.md", "docs/security.md"],
+    "securitySurfaces": [
+      "Any change to PUBLIC_ROUTES in src/middleware/routes.ts: who can now reach what?",
+      "Any raw SQL outside src/db/queries: we require the query builder everywhere else."
+    ],
+    "secondOpinion": {
+      "$comment": "A real second model. Without this, one model runs both passes and the report says so.",
+      "command": ["codex", "exec", "--output-last-message", "{outputFile}", "{promptFile}"],
+      "required": false
+    }
+  },
+
+  "exercise": {
+    "$comment": "How an agent drives the running app. Without this, the live-run step is guesswork.",
+    "notes": [
+      "Dev server: npm run dev, then http://localhost:3000.",
+      "Sign in with the seeded account dev@example.com / password from .env.local.",
+      "API routes accept a session cookie, so fetch from an already-signed-in page rather than minting a token.",
+      "Read rows back with: psql $DATABASE_URL"
+    ]
+  },
+
+  "pr": {
+    "enabled": true,
+    "createCommand": ["gh", "pr", "create", "--title", "{title}", "--body-file", "{body}"],
+    "updateCommand": ["gh", "pr", "edit", "--title", "{title}", "--body-file", "{body}"]
+  },
+
+  "coverage": {
+    "areas": [
+      { "name": "src/services", "paths": ["src/services/**"], "testConvention": "sibling" },
+      {
+        "name": "src/components",
+        "paths": ["src/components/**"],
+        "advisory": true,
+        "note": "covered by the e2e suite rather than by unit tests"
+      }
+    ],
+    "exempt": ["**/*.d.ts", "src/generated/**", "**/index.ts"],
+    "unclaimedBlocks": true
+  }
+}
